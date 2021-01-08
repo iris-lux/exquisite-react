@@ -5,6 +5,9 @@ import FinalPoem from './FinalPoem';
 import RecentSubmission from './RecentSubmission';
 
 const Game = () => {
+  const [sentences, setSentences] = useState([])
+  const [isSubmitted, setIsSubmitted] = useState(false)
+
   const exampleFormat = FIELDS.map((field) => {
     if (field.key) {
       return field.placeholder;
@@ -13,6 +16,22 @@ const Game = () => {
     }
   }).join(' ');
 
+  const addSentence = (formFields) => {
+    const newSentences = [...sentences]
+    newSentences.push(`The ${formFields.adj1} ${formFields.noun1} ${formFields.adverb} ${formFields.verb} the ${formFields.adj2} ${formFields.noun2}`)
+    setSentences(newSentences)
+  }
+
+  const revealPoem = () => {
+    setIsSubmitted(true);
+    return sentences.map( sentence => {
+      return(
+        <p>{sentence}</p>
+      )
+    })
+
+    
+  }
   return (
     <div className="Game">
       <h2>Game</h2>
@@ -25,11 +44,11 @@ const Game = () => {
         { exampleFormat }
       </p>
 
-      <RecentSubmission />
+      {(sentences.length > 0) ? <RecentSubmission submission = {sentences[sentences.length - 1]}/> : ''}
 
-      <PlayerSubmissionForm />
+      {isSubmitted ? '' : <PlayerSubmissionForm sendSubmission = {addSentence} fields = {FIELDS} />}
 
-      <FinalPoem />
+      <FinalPoem revealPoem = {revealPoem} submissions = {sentences}/>
 
     </div>
   );
